@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Как заказать билеты
+{% endblock %}
+
+{% block body %}
+<div class = "container">
+    <h1> Как заказать билеты </h1>
+</div>
+{% endblock %}
