@@ -1,0 +1,19 @@
+#from app import db, session, Base
+#class Article(db.Model):
+#    id = db.Column(db.Integer, primary_key=True)
+#    title = db.Column(db.String(100), nullable=False)
+#    intro = db.Column(db.String(300), nullable=False)
+#    text = db.Column(db.Text(300), nullable=False)
+#    date = db.Column(db.DateTime(300), default=datetime.utcnow)
+
+
+class Animal(Base):
+    __tablename__ = 'Animal'
+    id = db.Column(db.Integer, primary_key=True)
+    type_of_anim = db.Column(db.String(100), nullable=False)
+    suit = db.Column(db.String(50), nullable=False)
+    age = db.Column(db.String(50), nullable=False)
+    food = db.Column(db.String(50), nullable=False)
+    suit = db.Column(db.String(50), nullable=False)
+    habitat= db.Column(db.String(50), nullable=False)
+    num_cage = db.Column(db.String(50), nullable=False)
