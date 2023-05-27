@@ -1,104 +1,63 @@
-from flask import Flask, render_template, url_for, request, redirect
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel = "stylesheet" href = "{{ url_for('static', filename = 'css/main.css') }}">
+    <link rel="stylesheet" href = "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<div class = "container">
+<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/home" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <span class="fs-4">Zoo</span>
+      </a>
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////zoo.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/home" class="nav-link active" aria-current="page">Главная</a></li>
+        <li class="nav-item"><a href="/about" class="nav-link">Новости</a></li>
+        <li class="nav-item"><a href="/tickets" class="nav-link">Волонтерство</a></li>
+      </ul>
 
-with app.app_context():
-    db.create_all()
+        <li class="btn btn-warning"><a href="/create_article" class="nav-link active">Создать</a></li>
 
-
-class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    intro = db.Column(db.String(300), nullable=False)
-    title = db.Column(db.String(100), nullable=False)
-    text = db.Column(db.Text, nullable=False)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return '<Article %r>' % self.username
-
-
-@app.route('/')
-@app.route('/home')
-def index():
-    return render_template("index.html")
-
-
-@app.route('/about')
-def about():
-    articles = Article.query.order_by(Article.date.desc()).all()
-
-    return render_template("about.html", articles=articles)
+    </header>
+</div>
+{% block body %}{% endblock %}
 
 
-@app.route('/about/<int:id>')
-def about_det(id):
-    article = Article.query.get(id)
+<footer class="container pt-4 my-md-5 pt-md-5 border-top">
+    <div class="row">
+      <div class="col-6 col-md">
+        <h5>Больше информации</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">О содержании животных</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Фотографии</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Отзывы</a></li>
 
-    return render_template("about_det.html", article=article)
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Где заказать</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="/tickets">Билеты</a></li>
 
-
-@app.route('/about/<int:id>/del')
-def about_delete(id):
-    article = Article.query.get_or_404(id) #значит если не будет найдена запись по айди, то вызовется ошибка 404
-
-    try:
-        db.session.delete(article)
-        db.session.commit()
-        return redirect ('/about')
-    except:
-        return "При удалении статьи произошла ошибка"
-
-
-@app.route('/about/<int:id>/update', methods=['POST', 'GET'])
-def post_update(id):
-    article = Article.query.get(id)
-    if request.method == "POST":
-        article.title = request.form['title']
-        article.intro = request.form['intro']
-        article.text = request.form['text']
-
-        try:
-            db.session.commit()
-            return redirect('/about')
-        except:
-            return "При редактировании статьи произошла ошибка"
-    else:
-         return render_template("about_update.html", article=article)
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Новости про</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="/about">Ушастиков</a></li>
 
 
-@app.route('/create_article', methods=['POST', 'GET'])
-def create_article():
-    if request.method == "POST":
-        title = request.form['title']
-        intro = request.form['intro']
-        text = request.form['text']
-
-        article = Article(title= title, intro = intro, text=text)
-
-        try:
-            db.session.add(article)
-            db.session.commit()
-            return redirect('/about')
-        except:
-            return "При добавлени статьи произошла ошибка"
-    else:
-         return render_template("create_article.html")
+        </ul>
+      </div>
+    </div>
+  </footer>
 
 
-@app.route('/tickets')
-def tickets():
-    return render_template("tickets.html")
-
-
-@app.route('/user/<string:name>/<int:id>')
-def user(name, id):
-    return "User page: " + name + " - " + str(id)
-
-
-if __name__ == "__main__":
-    app.run(debug = True)
+</body>
+</html>
